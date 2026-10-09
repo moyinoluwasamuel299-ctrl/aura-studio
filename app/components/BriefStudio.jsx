@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -91,6 +90,7 @@ export default function BriefStudio() {
   const [showBrief, setShowBrief] = useState(false);
 
   const currentQuestion = questions[step];
+  const letters = ["A", "B", "C", "D"];
 
   const chooseAnswer = (value) => {
     setAnswers((previous) =>
@@ -174,61 +174,75 @@ Next step: Share this brief with AURA® to discuss your project.`;
   return (
     <section
       id="brief"
-      className="bg-[#292821] px-6 py-24 text-[#f8f6f0] sm:px-10 md:py-32 lg:px-16"
+      className="relative overflow-hidden bg-[#292821] px-6 py-24 text-[#f8f6f0] sm:px-10 md:py-32 lg:px-16"
     >
-      <div className="mx-auto max-w-screen-2xl">
+      {/* soft background glows */}
+      <div className="absolute -left-24 top-20 h-96 w-96 rounded-full bg-[#a7864d]/20 blur-3xl" />
+      <div className="absolute -right-24 bottom-10 h-80 w-80 rounded-full bg-[#c6aa76]/15 blur-3xl" />
+
+      <div className="relative mx-auto max-w-screen-2xl">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           {/* Introduction */}
           <div>
-            <p className="text-xs uppercase tracking-widest text-[#c6aa76]">
-              03 / The Brief Studio
-            </p>
+            <div className="inline-flex items-center gap-3 rounded-full border border-[#c6aa76]/30 bg-white/5 px-4 py-2">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-[#c6aa76]" />
+              <p className="text-xs uppercase tracking-widest text-[#c6aa76]">
+                03 / The Brief Studio
+              </p>
+            </div>
 
-            <h2 className="mt-7 font-serif text-5xl leading-tight sm:text-6xl md:text-7xl">
+            <h2 className="mt-8 font-serif text-5xl leading-tight sm:text-6xl md:text-7xl">
               Every great idea starts{" "}
               <span className="italic text-[#c6aa76]">somewhere.</span>
             </h2>
 
-            <p className="mt-7 max-w-md text-sm leading-7 text-white/60">
+            <p className="mt-7 max-w-md text-base leading-8 text-white/60">
               Tell us a little about what you have in mind. A few
               thoughtful questions will help shape an initial direction
               for your project.
             </p>
 
-            <div className="mt-12 border-t border-white/15 pt-5">
+            <div className="mt-12 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:border-[#c6aa76]/40">
               <p className="text-xs uppercase tracking-widest text-white/40">
                 A little inspiration
               </p>
 
-              <p className="mt-4 font-serif text-2xl italic text-[#c6aa76]">
+              <p className="mt-4 font-serif text-3xl italic text-[#c6aa76]">
                 Clarity creates possibility.
               </p>
             </div>
           </div>
 
           {/* Consultation experience */}
-          <div className="border border-white/15 p-5 sm:p-8 md:p-10">
-            <div className="mb-9 flex items-center justify-between gap-4">
+          <div className="rounded-3xl border border-white/15 bg-white/5 p-5 shadow-2xl shadow-black/30 backdrop-blur-md sm:p-8 md:p-10">
+            <div className="mb-6 flex items-center justify-between gap-4">
               <p className="text-xs uppercase tracking-widest text-white/50">
                 {showBrief
                   ? "Your project direction"
                   : `Question ${step + 1} of ${questions.length}`}
               </p>
 
-              <p className="text-xs text-[#c6aa76]">
-                {showBrief ? "Brief ready" : `${Math.round(((step + 1) / questions.length) * 100)}%`}
+              <p className="rounded-full border border-[#c6aa76]/30 px-3 py-1 text-xs text-[#c6aa76]">
+                {showBrief
+                  ? "Brief ready"
+                  : `${Math.round(((step + 1) / questions.length) * 100)}%`}
               </p>
             </div>
 
-            <div className="mb-10 h-px bg-white/10">
-              <div
-                className="h-px bg-[#c6aa76] transition-all duration-500"
-                style={{
-                  width: showBrief
-                    ? "100%"
-                    : `${((step + 1) / questions.length) * 100}%`,
-                }}
-              />
+            {/* step pills */}
+            <div className="mb-10 flex gap-2">
+              {questions.map((question, index) => (
+                <div
+                  key={question.label}
+                  className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10"
+                >
+                  <div
+                    className={`h-full rounded-full bg-[#c6aa76] shadow-[0_0_10px_#c6aa76] transition-all duration-700 ${
+                      showBrief || index <= step ? "w-full" : "w-0"
+                    }`}
+                  />
+                </div>
+              ))}
             </div>
 
             {!showBrief ? (
@@ -241,8 +255,8 @@ Next step: Share this brief with AURA® to discuss your project.`;
                   {currentQuestion.description}
                 </p>
 
-                <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                  {currentQuestion.options.map((option) => {
+                <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                  {currentQuestion.options.map((option, index) => {
                     const selected = answers[step] === option.value;
 
                     return (
@@ -251,23 +265,37 @@ Next step: Share this brief with AURA® to discuss your project.`;
                         type="button"
                         onClick={() => chooseAnswer(option.value)}
                         aria-pressed={selected}
-                        className={`min-h-32 border p-5 text-left transition-all duration-300 ${
+                        className={`group min-h-36 rounded-2xl border p-5 text-left transition-all duration-300 hover:-translate-y-1 ${
                           selected
-                            ? "border-[#c6aa76] bg-[#c6aa76]/10"
-                            : "border-white/15 hover:border-white/40"
+                            ? "border-[#c6aa76] bg-[#c6aa76]/10 shadow-lg shadow-[#c6aa76]/10"
+                            : "border-white/15 bg-white/5 hover:border-[#c6aa76]/50 hover:bg-white/10"
                         }`}
                       >
                         <span className="flex items-center justify-between gap-3">
-                          <span className="font-serif text-xl">
-                            {option.title}
+                          <span
+                            className={`flex h-8 w-8 items-center justify-center rounded-full border text-xs transition-all duration-300 ${
+                              selected
+                                ? "border-[#c6aa76] bg-[#c6aa76] text-[#292821]"
+                                : "border-white/20 text-white/60 group-hover:border-[#c6aa76] group-hover:text-[#c6aa76]"
+                            }`}
+                          >
+                            {selected ? "✓" : letters[index]}
                           </span>
 
-                          <span className="text-[#c6aa76]">
-                            {selected ? "✓" : "↗"}
+                          <span
+                            className={`text-[#c6aa76] transition-transform duration-300 ${
+                              selected ? "rotate-45" : "group-hover:rotate-45"
+                            }`}
+                          >
+                            ↗
                           </span>
                         </span>
 
-                        <span className="mt-3 block text-sm leading-6 text-white/50">
+                        <span className="mt-5 block font-serif text-xl">
+                          {option.title}
+                        </span>
+
+                        <span className="mt-2 block text-sm leading-6 text-white/50">
                           {option.detail}
                         </span>
                       </button>
@@ -289,7 +317,7 @@ Next step: Share this brief with AURA® to discuss your project.`;
                     type="button"
                     onClick={nextStep}
                     disabled={!answers[step]}
-                    className="bg-[#c6aa76] px-6 py-4 text-sm text-[#292821] transition-colors hover:bg-[#ddc89e] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="rounded-full bg-[#c6aa76] px-7 py-4 text-sm font-medium text-[#292821] shadow-lg shadow-[#c6aa76]/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#ddc89e] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:bg-[#c6aa76]"
                   >
                     {step === questions.length - 1
                       ? "Create my brief ↗"
@@ -320,52 +348,66 @@ Next step: Share this brief with AURA® to discuss your project.`;
                   value={projectName}
                   onChange={(event) => setProjectName(event.target.value)}
                   placeholder="e.g. A new chapter"
-                  className="mt-3 w-full border-b border-white/25 bg-transparent py-4 text-base text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#c6aa76]"
+                  className="mt-3 w-full rounded-xl border border-white/20 bg-white/5 px-5 py-4 text-base text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#c6aa76]"
                 />
 
-                <div className="mt-8 space-y-6">
-                  <div>
+                {/* answer summary cards */}
+                <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
                     <p className="text-xs uppercase tracking-widest text-white/40">
                       Project needs
                     </p>
-                    <p className="mt-2 text-sm">{answers[0]}</p>
+                    <p className="mt-3 font-serif text-xl text-[#c6aa76]">
+                      {answers[0]}
+                    </p>
                   </div>
 
-                  <div>
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
                     <p className="text-xs uppercase tracking-widest text-white/40">
                       Audience
                     </p>
-                    <p className="mt-2 text-sm">{answers[1]}</p>
+                    <p className="mt-3 font-serif text-xl text-[#c6aa76]">
+                      {answers[1]}
+                    </p>
                   </div>
 
-                  <div>
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
                     <p className="text-xs uppercase tracking-widest text-white/40">
                       Main objective
                     </p>
-                    <p className="mt-2 text-sm">{answers[2]}</p>
-                  </div>
-
-                  <div>
-                    <p className="text-xs uppercase tracking-widest text-white/40">
-                      Recommended services
+                    <p className="mt-3 font-serif text-xl text-[#c6aa76]">
+                      {answers[2]}
                     </p>
+                  </div>
+                </div>
 
-                    <div className="mt-3 space-y-4">
-                      {recommendations.map((recommendation) => (
-                        <div
-                          key={recommendation}
-                          className="border-l border-[#c6aa76] pl-4"
-                        >
-                          <p className="font-serif text-xl text-[#c6aa76]">
-                            {recommendation}
-                          </p>
+                {/* recommended services */}
+                <div className="mt-8">
+                  <p className="text-xs uppercase tracking-widest text-white/40">
+                    Recommended services
+                  </p>
 
-                          <p className="mt-1 text-sm leading-6 text-white/50">
-                            {recommendationDetails[recommendation]}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                    {recommendations.map((recommendation, index) => (
+                      <div
+                        key={recommendation}
+                        className="group rounded-2xl border border-[#c6aa76]/30 bg-[#c6aa76]/5 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#c6aa76]"
+                      >
+                        <p className="text-xs tracking-widest text-[#c6aa76]">
+                          0{index + 1}
+                        </p>
+
+                        <p className="mt-3 font-serif text-2xl text-[#c6aa76]">
+                          {recommendation}
+                        </p>
+
+                        <p className="mt-2 text-sm leading-6 text-white/50">
+                          {recommendationDetails[recommendation]}
+                        </p>
+
+                        <div className="mt-4 h-px w-8 bg-[#c6aa76] transition-all duration-500 group-hover:w-full" />
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -373,7 +415,7 @@ Next step: Share this brief with AURA® to discuss your project.`;
                   <button
                     type="button"
                     onClick={sendBrief}
-                    className="bg-[#c6aa76] px-6 py-4 text-sm text-[#292821] transition-colors hover:bg-[#ddc89e]"
+                    className="rounded-full bg-[#c6aa76] px-7 py-4 text-sm font-medium text-[#292821] shadow-lg shadow-[#c6aa76]/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#ddc89e]"
                   >
                     Send this to AURA ↗
                   </button>
@@ -381,7 +423,7 @@ Next step: Share this brief with AURA® to discuss your project.`;
                   <button
                     type="button"
                     onClick={previousStep}
-                    className="border border-white/20 px-6 py-4 text-sm transition-colors hover:border-[#c6aa76]"
+                    className="rounded-full border border-white/20 px-7 py-4 text-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-[#c6aa76] hover:text-[#c6aa76]"
                   >
                     Refine my answers
                   </button>
