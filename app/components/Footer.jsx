@@ -68,6 +68,7 @@ export default function Footer() {
         </div>
 
         {/* Top section */}
+        
         <div className="flex flex-col gap-12 border-b border-white/15 py-14 md:flex-row md:items-start md:justify-between">
           <div>
             <a
@@ -142,6 +143,7 @@ export default function Footer() {
         </div>
 
         {/* Location and back-to-top */}
+
         <div className="flex flex-col gap-5 border-b border-white/15 py-7 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <span className="h-2 w-2 animate-pulse rounded-full bg-[#c6aa76]" />
@@ -166,14 +168,14 @@ export default function Footer() {
           </button>
         </div>
 
-        {/* Giant wordmark */}
+    
         <div className="group relative pt-8">
           <p className="pointer-events-none select-none bg-linear-to-b from-[#f8f6f0] to-[#f8f6f0]/10 bg-clip-text text-center font-serif text-[19vw] leading-none tracking-[-0.08em] text-transparent transition-all duration-700 group-hover:from-[#c6aa76] group-hover:to-[#a7864d]/10 md:pointer-events-auto">
             AURA<span className="align-top text-[5vw] tracking-normal">®</span>
           </p>
         </div>
 
-        {/* Copyright */}
+         {/* Copyright  */}
         <div className="flex flex-col gap-3 border-t border-white/15 py-5 text-xs text-white/40 sm:flex-row sm:items-center sm:justify-between">
           <p>© {year ?? "2026"} AURA® Studio. All rights reserved.</p>
 

@@ -114,7 +114,7 @@ export default function Hero() {
 
               <div className="absolute inset-0 bg-black/10" />
 
-              {/* frosted glass caption */}
+              {/* glass caption */}
               <div className="absolute inset-x-4 bottom-4 flex items-end justify-between rounded-2xl border border-white/30 bg-white/15 p-5 text-white backdrop-blur-md">
                 <div>
                   <p className="text-xs uppercase tracking-widest">

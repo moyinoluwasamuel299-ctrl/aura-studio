@@ -172,7 +172,7 @@ export default function About() {
       <div className="px-6 py-16 sm:px-10 md:py-24 lg:px-16">
         <div className="group relative mx-auto h-[380px] max-w-screen-2xl overflow-hidden rounded-3xl sm:h-[480px] md:h-[620px]">
           <img
-            src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2000&q=85"
+            src="https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D"
             alt="Quiet, thoughtfully designed contemporary architecture"
             className="h-full w-full object-cover transition-transform duration-[1500ms] group-hover:scale-105"
           />
