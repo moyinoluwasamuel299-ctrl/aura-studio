@@ -107,7 +107,7 @@ export default function Hero() {
               }}
             >
               <img
-                src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=1200&q=85"
+                src="https://storage.googleapis.com/gpt-engineer-file-uploads/a9603d28-d815-4128-a606-d7e331e99c52/image-gen/d6dd5bc1-b8e8-44b5-a011-9f415812e881?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=go-api%40lovable-core-prod.iam.gserviceaccount.com%2F20261012%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20261012T222738Z&X-Goog-Expires=3599&X-Goog-Signature=9ed0c7c99993a2bb5365384a37fccde311b06809aaadd8b0be905231aa113b4c4f70080430e14de66363f0c359e645e94a3cf56a916451132023c7dbfc33686989c1fb9a8fc41fcb55ac48f5d3e022175d8afeb9545f6171c8ef180c77580fccd394e823e7f3fb1cf0aeb62b4f8526956da741e92ac097919a000012fa9ed9a72e466a03baecd887be1f1c73b56d1d5ad1c02427c3b0f52608aa02c8c4b3850eb0d282614315216764d254e8e8f9eae48e023328391775a9508a09749c257d296a6f4e93fa0130f46fe05e49b66570889313433fe38acce0fd1d7959482cc74e11e65389e676614dbb25135720931959ece5ebd8e648f1c35d2e4900a16743e8&X-Goog-SignedHeaders=host"
                 alt="Artwork in a contemporary art gallery"
                 className="h-full w-full object-cover transition-transform duration-[1500ms] group-hover:scale-105"
               />
