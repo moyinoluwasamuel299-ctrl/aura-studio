@@ -2,8 +2,34 @@
 
 import { useEffect, useState } from "react";
 
+// CHANGE 1: the picture stays the same, only the caption changes.
+// Every caption talks about what this picture shows (code, design, interfaces).
+const heroImage = {
+  src: "https://images.unsplash.com/photo-1547658719-da2b51169166?w=1200&h=1500&fit=crop&q=85&auto=format",
+  alt: "Website design and code shown across a monitor, tablet and phone",
+};
+
+const captions = [
+  { label: "Digital", line: "Interfaces that feel effortless." },
+  { label: "Design & code", line: "Ideas become working code." },
+  { label: "Web design", line: "Sites crafted to convert." },
+  { label: "UI/UX", line: "Every detail, thoughtfully built." },
+];
+
 export default function Hero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  // CHANGE 2: which caption is showing, with a timer that moves to the
+  // next one every 4 seconds
+  const [activeCaption, setActiveCaption] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveCaption((current) => (current + 1) % captions.length);
+    }, 4000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (event) => {
@@ -101,30 +127,69 @@ export default function Hero() {
             <div className="absolute -right-4 -top-4 h-full w-full rounded-3xl border border-[#a7864d]/50" />
 
             <div
-              className="group relative aspect-4/5 overflow-hidden rounded-3xl bg-[#e7dfd1] shadow-2xl shadow-black/10 transition-transform duration-300 ease-out"
+              className="group relative aspect-4/5 overflow-hidden rounded-3xl bg-[#292821] shadow-2xl shadow-black/10 transition-transform duration-300 ease-out"
               style={{
                 transform: `translate(${mousePosition.x}px, ${mousePosition.y}px)`,
               }}
             >
               <img
-                src="https://storage.googleapis.com/gpt-engineer-file-uploads/a9603d28-d815-4128-a606-d7e331e99c52/image-gen/d6dd5bc1-b8e8-44b5-a011-9f415812e881?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=go-api%40lovable-core-prod.iam.gserviceaccount.com%2F20261012%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20261012T222738Z&X-Goog-Expires=3599&X-Goog-Signature=9ed0c7c99993a2bb5365384a37fccde311b06809aaadd8b0be905231aa113b4c4f70080430e14de66363f0c359e645e94a3cf56a916451132023c7dbfc33686989c1fb9a8fc41fcb55ac48f5d3e022175d8afeb9545f6171c8ef180c77580fccd394e823e7f3fb1cf0aeb62b4f8526956da741e92ac097919a000012fa9ed9a72e466a03baecd887be1f1c73b56d1d5ad1c02427c3b0f52608aa02c8c4b3850eb0d282614315216764d254e8e8f9eae48e023328391775a9508a09749c257d296a6f4e93fa0130f46fe05e49b66570889313433fe38acce0fd1d7959482cc74e11e65389e676614dbb25135720931959ece5ebd8e648f1c35d2e4900a16743e8&X-Goog-SignedHeaders=host"
-                alt="Artwork in a contemporary art gallery"
+                src={heroImage.src}
+                alt={heroImage.alt}
                 className="h-full w-full object-cover transition-transform duration-[1500ms] group-hover:scale-105"
               />
 
-              <div className="absolute inset-0 bg-black/10" />
+              {/* soft tint: darker at the top and bottom so the text stays readable */}
+              <div className="absolute inset-0 bg-linear-to-t from-black/45 via-black/5 to-black/20" />
+
+              {/* CHANGE 3: counter (top left) and caption selectors (top right) */}
+              <div className="absolute inset-x-5 top-5 z-10 flex items-center justify-between text-white">
+                <p className="text-[10px] uppercase tracking-[0.3em] text-white/90">
+                  {String(activeCaption + 1).padStart(2, "0")}
+                  <span className="mx-2 text-white/50">/</span>
+                  {String(captions.length).padStart(2, "0")}
+                </p>
+
+                <div className="flex items-center gap-2">
+                  {captions.map((caption, index) => (
+                    <button
+                      key={caption.label}
+                      type="button"
+                      onClick={() => setActiveCaption(index)}
+                      aria-label={`Show caption ${index + 1}`}
+                      className={`h-px transition-all duration-500 ${
+                        index === activeCaption
+                          ? "w-10 bg-[#c6aa76]"
+                          : "w-5 bg-white/50 hover:bg-white"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
 
               {/* glass caption */}
-              <div className="absolute inset-x-4 bottom-4 flex items-end justify-between rounded-2xl border border-white/30 bg-white/15 p-5 text-white backdrop-blur-md">
-                <div>
-                  <p className="text-xs uppercase tracking-widest">
-                    The art of possibility
-                  </p>
-                  <p className="mt-2 font-serif text-2xl italic">
-                    Made with meaning.
-                  </p>
+              <div className="absolute inset-x-4 bottom-4 z-10 flex items-end justify-between rounded-2xl border border-white/30 bg-white/15 p-5 text-white backdrop-blur-md">
+                {/* CHANGE 4: the caption text changes, the picture stays */}
+                <div className="grid">
+                  {captions.map((caption, index) => (
+                    <div
+                      key={caption.label}
+                      aria-hidden={index !== activeCaption}
+                      className={`col-start-1 row-start-1 transition-all duration-1000 ${
+                        index === activeCaption
+                          ? "translate-y-0 opacity-100"
+                          : "translate-y-2 opacity-0"
+                      }`}
+                    >
+                      <p className="text-xs uppercase tracking-widest">
+                        {caption.label}
+                      </p>
+                      <p className="mt-2 font-serif text-2xl italic">
+                        {caption.line}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-lg transition-all duration-500 group-hover:rotate-45 group-hover:bg-[#a7864d]">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/20 text-lg transition-all duration-500 group-hover:rotate-45 group-hover:bg-[#a7864d]">
                   ↗
                 </span>
               </div>

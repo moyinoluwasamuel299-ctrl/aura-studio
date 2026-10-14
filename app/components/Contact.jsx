@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+// CHANGE 1: added useEffect to the import
+import { useState, useEffect } from "react";
 
-export default function Contact() {
+// CHANGE 2: the component now receives the brief from page.js
+export default function Contact({ brief }) {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -11,6 +13,19 @@ export default function Contact() {
 
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState("");
+
+    // CHANGE 3: remembers if a brief from the Brief Studio was added
+    const [briefAdded, setBriefAdded] = useState(false);
+
+    // when a brief arrives from the Brief Studio, put it in the message box
+    useEffect(() => {
+        if (brief) {
+            setFormData((previous) => ({ ...previous, message: brief.text }));
+            setSubmitted(false);
+            setError("");
+            setBriefAdded(true);
+        }
+    }, [brief]);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -174,6 +189,8 @@ export default function Contact() {
                                     onClick={() => {
                                         setSubmitted(false);
                                         setFormData({ name: "", email: "", message: "" });
+                                        // CHANGE 4: hide the brief note when the form resets
+                                        setBriefAdded(false);
                                     }}
                                     className="mt-6 w-fit text-sm text-[#716b60] transition-colors hover:text-[#a7864d]"
                                 >
@@ -250,10 +267,18 @@ export default function Contact() {
                                         Tell us about your idea
                                     </label>
 
+                                    {/* CHANGE 3: note shown when the brief has been added */}
+                                    {briefAdded && (
+                                        <p className="mb-3 rounded-xl border border-[#a7864d]/30 bg-[#a7864d]/5 px-4 py-3 text-sm text-[#716b60]">
+                                            ✳ Your brief from the Brief Studio has been added.
+                                            Edit it if you like, then add your name and email.
+                                        </p>
+                                    )}
+
                                     <textarea
                                         id="contact-message"
                                         name="message"
-                                        rows={4}
+                                        rows={briefAdded ? 12 : 4}
                                         value={formData.message}
                                         onChange={handleChange}
                                         placeholder="A little about your project, your plans, or what you're curious about..."

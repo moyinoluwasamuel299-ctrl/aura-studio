@@ -83,7 +83,8 @@ const questions = [
   },
 ];
 
-export default function BriefStudio() {
+// CHANGE 1: the component now receives onSendBrief from page.js
+export default function BriefStudio({ onSendBrief }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState(["", "", ""]);
   const [projectName, setProjectName] = useState("");
@@ -161,14 +162,12 @@ ${recommendations.join(", ")}
 Prepared with the AURA® Brief Studio.
 Next step: Share this brief with AURA® to discuss your project.`;
 
+  // CHANGE 2: instead of opening an email, send the brief to the
+  // Contact form (through page.js) and scroll down to it
   const sendBrief = () => {
-    const subject = encodeURIComponent(
-      `Project enquiry: ${projectName.trim() || "New creative project"}`
-    );
-    const body = encodeURIComponent(briefText);
+    onSendBrief(briefText);
 
-    window.location.href =
-      `mailto:hello@aurastudio.com?subject=${subject}&body=${body}`;
+    document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -429,9 +428,11 @@ Next step: Share this brief with AURA® to discuss your project.`;
                   </button>
                 </div>
 
+                {/* CHANGE 3: updated note, the brief now goes to the contact form */}
                 <p className="mt-5 text-xs leading-5 text-white/40">
-                  Your brief is generated in your browser. Sending it opens
-                  your email application with the details filled in.
+                  Your brief is generated in your browser. Sending it moves it
+                  into the contact form below, where you can add your name and
+                  email.
                 </p>
               </div>
             )}

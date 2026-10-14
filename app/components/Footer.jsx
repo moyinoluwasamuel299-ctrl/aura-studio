@@ -1,27 +1,63 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Footer() {
   const [showBackToTop, setShowBackToTop] = useState(false);
+  // NEW: true while the page is scrolling, so the button can open up
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimer = useRef(null);
   const [year, setYear] = useState(null);
 
+  // NEW: controls the AURA letter-by-letter entrance
+  const [wordmarkVisible, setWordmarkVisible] = useState(false);
+  const wordmarkRef = useRef(null);
+  const wordmarkLetters = ["A", "U", "R", "A", "®"];
+
   useEffect(() => {
-    const handleScroll = () => {
+    const updateButton = () => {
       setShowBackToTop(window.scrollY > 500);
     };
 
-    handleScroll();
+    const handleScroll = () => {
+      updateButton();
 
-    window.addEventListener("scroll", handleScroll);
+      // NEW: the button opens while scrolling, and closes again
+      // once the user has stopped for a moment (works on mobile too)
+      setIsScrolling(true);
+      clearTimeout(scrollTimer.current);
+      scrollTimer.current = setTimeout(() => setIsScrolling(false), 1500);
+    };
+
+    updateButton();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      clearTimeout(scrollTimer.current);
     };
   }, []);
 
   useEffect(() => {
     setYear(new Date().getFullYear());
+  }, []);
+
+  // NEW: when the big AURA scrolls into view the letters slide in,
+  // when it leaves the screen they reset so it plays again next time
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setWordmarkVisible(entries[0].isIntersecting);
+      },
+      { threshold: 0.3 }
+    );
+
+    if (wordmarkRef.current) {
+      observer.observe(wordmarkRef.current);
+    }
+
+    return () => observer.disconnect();
   }, []);
 
   const exploreLinks = [
@@ -152,26 +188,65 @@ export default function Footer() {
             </p>
           </div>
 
+          {/* CHANGED: fixed to the screen. It rests as just the arrow, and opens
+              to show "Back to top" while scrolling or on hover / keyboard focus. */}
           <button
             type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className={`group flex w-fit items-center gap-3 text-xs uppercase tracking-widest text-[#c6aa76] transition-all duration-300 hover:text-white ${
-              showBackToTop ? "visible opacity-100" : "invisible opacity-0"
+            className={`group fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-[max(1.25rem,env(safe-area-inset-right))] z-50 flex touch-manipulation items-center rounded-full bg-[#292821]/90 p-1 text-xs uppercase tracking-widest text-[#c6aa76] shadow-lg shadow-black/20 backdrop-blur transition-all duration-500 hover:text-white focus-visible:text-white ${
+              showBackToTop
+                ? "visible translate-y-0 opacity-100"
+                : "invisible translate-y-4 opacity-0"
             }`}
             aria-label="Back to top"
             tabIndex={showBackToTop ? 0 : -1}
           >
-            Back to top
-            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#c6aa76]/50 text-lg transition-all duration-300 group-hover:-translate-y-1 group-hover:border-[#a7864d] group-hover:bg-[#a7864d]">
+            {/* the label: hidden until scrolling, hover or focus */}
+            <span
+              className={`overflow-hidden whitespace-nowrap transition-all duration-500 ease-out group-hover:max-w-40 group-hover:pl-4 group-hover:pr-3 group-hover:opacity-100 group-focus-visible:max-w-40 group-focus-visible:pl-4 group-focus-visible:pr-3 group-focus-visible:opacity-100 ${
+                isScrolling
+                  ? "max-w-40 pl-4 pr-3 opacity-100"
+                  : "max-w-0 pl-0 pr-0 opacity-0"
+              }`}
+            >
+              Back to top
+            </span>
+
+            {/* the arrow: always visible, 44px so it is easy to tap on mobile */}
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#c6aa76]/50 text-lg transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-[#a7864d] group-hover:bg-[#a7864d]">
               ↑
             </span>
           </button>
         </div>
 
     
-        <div className="group relative pt-8">
-          <p className="pointer-events-none select-none bg-linear-to-b from-[#f8f6f0] to-[#f8f6f0]/10 bg-clip-text text-center font-serif text-[19vw] leading-none tracking-[-0.08em] text-transparent transition-all duration-700 group-hover:from-[#c6aa76] group-hover:to-[#a7864d]/10 md:pointer-events-auto">
-            AURA<span className="align-top text-[5vw] tracking-normal">®</span>
+        {/* CHANGED: same big AURA, but split into letters that slide up one at a time */}
+        <div ref={wordmarkRef} className="group relative pt-8">
+          <p className="pointer-events-none select-none text-center font-serif text-[19vw] leading-none tracking-[0.03em] md:pointer-events-auto">
+            {wordmarkLetters.map((letter, index) => (
+              // outer box hides the letter until it slides up into view
+              <span
+                key={index}
+                className={`inline-block [clip-path:inset(0_-0.3em)] ${
+                  letter === "®" ? "align-top text-[5vw] tracking-normal" : ""
+                }`}
+              >
+                {/* middle span does the sliding, with a delay per letter */}
+                <span
+                  className={`inline-block transition-transform duration-1000 ease-out ${
+                    wordmarkVisible ? "translate-y-0" : "translate-y-full"
+                  }`}
+                  style={{
+                    transitionDelay: wordmarkVisible ? `${index * 150}ms` : "0ms",
+                  }}
+                >
+                  {/* inner span keeps your original gradient and hover colour */}
+                  <span className="inline-block bg-linear-to-b from-[#f8f6f0] to-[#f8f6f0]/10 bg-clip-text text-transparent transition-all duration-700 group-hover:from-[#c6aa76] group-hover:to-[#a7864d]/10">
+                    {letter}
+                  </span>
+                </span>
+              </span>
+            ))}
           </p>
         </div>
 

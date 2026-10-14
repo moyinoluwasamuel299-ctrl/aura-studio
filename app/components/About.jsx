@@ -1,4 +1,64 @@
+"use client";
+
+// CHANGE 1: the image break now uses state, so this file needs "use client"
+// above and useState / useEffect imported here
+import { useState, useEffect } from "react";
+
+// CHANGE 2: the pictures AND the write-up for the image break. Each picture
+// has its own two-line title and small line, so the text always matches what
+// the picture shows (coding and the Brief Studio). They load straight from
+// Unsplash, so there is nothing to download.
+const slides = [
+  {
+    src: "https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
+    alt: "Code open on a monitor in a dark, focused workspace",
+    title: ["Built with care.", "Down to every line."],
+    subtitle: "Clean code, thoughtfully considered.",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=1600&auto=format&fit=crop",
+    alt: "Lines of code on a screen",
+    title: ["Ideas become", "working code."],
+    subtitle: "Design and development, side by side.",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=1600&auto=format&fit=crop",
+    alt: "A team planning a project together with notes",
+    title: ["Every project starts", "with a good brief."],
+    subtitle: "Shape yours in the Brief Studio.",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=1600&auto=format&fit=crop",
+    alt: "Designer working on layouts and colour choices",
+    title: ["From first sketch", "to finished site."],
+    subtitle: "Branding · UI/UX · Web design.",
+  },
+];
+
 export default function About() {
+  // CHANGE 3: which picture is showing, which ones failed to load,
+  // and a timer that changes the picture every 5 seconds
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [brokenSlides, setBrokenSlides] = useState([]);
+
+  // only keep the pictures that loaded properly, so there is never an empty slide
+  const workingSlides = slides.filter(
+    (slide) => !brokenSlides.includes(slide.src)
+  );
+  const shownSlide = activeSlide % Math.max(workingSlides.length, 1);
+  // the write-up follows the pictures (uses all of them if none loaded)
+  const textSlides = workingSlides.length > 0 ? workingSlides : slides;
+
+  useEffect(() => {
+    if (workingSlides.length < 2) return;
+
+    const timer = setInterval(() => {
+      setActiveSlide((current) => (current + 1) % workingSlides.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [workingSlides.length]);
+
   const values = [
     {
       number: "01",
@@ -170,26 +230,71 @@ export default function About() {
 
       {/* Architectural image break */}
       <div className="px-6 py-16 sm:px-10 md:py-24 lg:px-16">
-        <div className="group relative mx-auto h-[380px] max-w-screen-2xl overflow-hidden rounded-3xl sm:h-[480px] md:h-[620px]">
-          <img
-            src="https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D"
-            alt="Quiet, thoughtfully designed contemporary architecture"
-            className="h-full w-full object-cover transition-transform duration-[1500ms] group-hover:scale-105"
-          />
+        {/* CHANGE 4: added bg-[#292821] so the box still looks right while pictures load */}
+        <div className="group relative mx-auto h-[380px] max-w-screen-2xl overflow-hidden rounded-3xl bg-[#292821] sm:h-[480px] md:h-[620px]">
+          {/* CHANGE 5: the single image is now a set of pictures that crossfade.
+              If a picture fails to load, it is removed from the list. */}
+          {workingSlides.map((slide, index) => (
+            <img
+              key={slide.src}
+              src={slide.src}
+              alt={slide.alt}
+              onError={() =>
+                setBrokenSlides((previous) => [...previous, slide.src])
+              }
+              className={`absolute inset-0 h-full w-full object-cover transition-all duration-[1800ms] ease-out ${
+                index === shownSlide
+                  ? "scale-105 opacity-100 group-hover:scale-110"
+                  : "scale-100 opacity-0"
+              }`}
+            />
+          ))}
 
           <div className="absolute inset-0 bg-black/25" />
 
-          {/* frosted glass card */}
-          <div className="absolute bottom-6 left-6 right-6 rounded-2xl border border-white/30 bg-white/15 p-6 text-white backdrop-blur-md sm:right-auto sm:max-w-lg md:bottom-10 md:left-10 md:p-8">
-            <p className="font-serif text-3xl leading-tight sm:text-4xl">
-              Space to think.
-              <br />
-              Freedom to create.
-            </p>
+          {/* CHANGE 6: small dots (top right) so people can pick a picture */}
+          {workingSlides.length > 1 && (
+            <div className="absolute right-5 top-5 z-10 flex gap-2 md:right-8 md:top-8">
+              {workingSlides.map((slide, index) => (
+                <button
+                  key={slide.src}
+                  type="button"
+                  onClick={() => setActiveSlide(index)}
+                  aria-label={`Show image ${index + 1}`}
+                  className={`h-1.5 rounded-full transition-all duration-500 ${
+                    index === shownSlide ? "w-8 bg-[#c6aa76]" : "w-3 bg-white/50"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
 
-            <p className="mt-4 text-xs uppercase tracking-widest text-white/80">
-              Thoughtfully considered, always.
-            </p>
+          {/* frosted glass card */}
+          <div className="absolute bottom-6 left-6 right-6 z-10 rounded-2xl border border-white/30 bg-white/15 p-6 text-white backdrop-blur-md sm:right-auto sm:max-w-lg md:bottom-10 md:left-10 md:p-8">
+            {/* CHANGE 7: the write-up changes with each picture */}
+            <div className="grid">
+              {textSlides.map((slide, index) => (
+                <div
+                  key={slide.src}
+                  aria-hidden={index !== shownSlide}
+                  className={`col-start-1 row-start-1 transition-all duration-1000 ${
+                    index === shownSlide
+                      ? "translate-y-0 opacity-100"
+                      : "translate-y-3 opacity-0"
+                  }`}
+                >
+                  <p className="font-serif text-3xl leading-tight sm:text-4xl">
+                    {slide.title[0]}
+                    <br />
+                    {slide.title[1]}
+                  </p>
+
+                  <p className="mt-4 text-xs uppercase tracking-widest text-white/80">
+                    {slide.subtitle}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
