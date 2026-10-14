@@ -68,7 +68,7 @@ export default function Contact({ brief }) {
             <div className="relative mx-auto max-w-screen-2xl">
                 <div className="grid gap-14 lg:grid-cols-2 lg:gap-24">
                     {/* Contact introduction */}
-                    <div>
+                    <div className="min-w-0">
                         <div className="inline-flex items-center gap-3 rounded-full border border-[#a7864d]/30 bg-white/60 px-4 py-2">
                             <span className="h-2 w-2 animate-pulse rounded-full bg-[#a7864d]" />
                             <p className="text-xs uppercase tracking-widest text-[#a7864d]">
@@ -93,12 +93,12 @@ export default function Contact({ brief }) {
                                 href="mailto:hello@aurastudio.com"
                                 className="group flex items-center justify-between gap-4 rounded-2xl border border-black/10 bg-white/70 p-6 transition-all duration-500 hover:-translate-y-1 hover:border-[#a7864d]/50 hover:bg-white hover:shadow-xl hover:shadow-[#a7864d]/10"
                             >
-                                <div>
+                                <div className="min-w-0">
                                     <p className="text-xs uppercase tracking-widest text-[#8b8578]">
                                         For new business enquiries
                                     </p>
 
-                                    <p className="mt-3 font-serif text-2xl transition-colors duration-300 group-hover:text-[#a7864d] sm:text-3xl">
+                                    <p className="mt-3 break-all font-serif text-xl transition-colors duration-300 group-hover:text-[#a7864d] sm:break-normal sm:text-3xl">
                                         hello@aurastudio.com
                                     </p>
                                 </div>
@@ -148,7 +148,7 @@ export default function Contact({ brief }) {
                     </div>
 
                     {/* Contact form */}
-                    <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-2xl shadow-black/5 sm:p-10">
+                    <div className="min-w-0 rounded-3xl border border-black/10 bg-white p-6 shadow-2xl shadow-black/5 sm:p-10">
                         {submitted ? (
                             <div
                                 role="status"
